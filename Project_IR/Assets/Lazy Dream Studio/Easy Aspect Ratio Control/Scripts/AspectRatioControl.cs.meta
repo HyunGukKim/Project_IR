@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: dc454f700fb418243a0a03f52526340f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 262947
+  packageName: Easy Aspect Ratio Control
+  packageVersion: 1.0
+  assetPath: Assets/Lazy Dream Studio/Easy Aspect Ratio Control/Scripts/AspectRatioControl.cs
+  uploadId: 630554

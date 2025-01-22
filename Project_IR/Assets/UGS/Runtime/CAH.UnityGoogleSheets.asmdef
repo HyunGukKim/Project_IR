@@ -1,0 +1,16 @@
+{
+    "name": "CAH.UnityGoogleSheets",
+    "rootNamespace": "",
+    "references": [
+        "ACTk.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
