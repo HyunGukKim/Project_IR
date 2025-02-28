@@ -1,5 +1,6 @@
 using CodeStage.AntiCheat.ObscuredTypes;
 using Game;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ActionLog
@@ -11,6 +12,7 @@ public class ActionLog
     public ObscuredBigInteger HitDmg; // 피격 데미지 (피격시)
     public ObscuredBigInteger ObjHP; // 행동자 체력
     public ObscuredBigInteger ObjCurHp; // 행동자 현재 체력
+    public List<ObscuredInt> CondtionList = new List<ObscuredInt>(); // 상태(버프,디버프) 리스트
 }
 
 public enum ActiveObj {

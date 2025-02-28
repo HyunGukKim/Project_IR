@@ -1,5 +1,6 @@
 
 using CodeStage.AntiCheat.ObscuredTypes;
+using Game;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
@@ -23,6 +24,7 @@ public class NormalStage : MonoBehaviour {
 
     // 코루틴
     private Coroutine _coNextWave = null;
+    private Coroutine _coDisplayTurnLogs = null;
 
     private void Start() {
         SkillDataCreate.Inst.DicInit();
@@ -34,7 +36,11 @@ public class NormalStage : MonoBehaviour {
     public void EnterStage(int stage, int wave) {
         Debug.Log("스테이지 : " + stage + " 웨이브 : " + wave);
         WaveStart(stage, wave);
-        DisplayTurnLogs();
+        if (_coDisplayTurnLogs != null) {
+            StopCoroutine(_coDisplayTurnLogs);
+            _coDisplayTurnLogs = null;
+        }
+        _coDisplayTurnLogs = StartCoroutine(DisplayTurnLogs());
     }
 
     private void WaveStart(int stage, int wave) {
@@ -184,23 +190,33 @@ public class NormalStage : MonoBehaviour {
 
     private void AddUnitToTurnList(UnitData unit, ActiveObj activeObj, List<ActionLog> actionLogs) {
         _turnList.Add(unit);
-        ActionLog log = new ActionLog {
-            ActiveObj = activeObj,
-            ActionType = Game.ActionType.None,
-            ObjIndex = unit.ObjIndex,
-            ObjCurHp = unit.CurHP,
-            ObjHP = unit.FinalHp
-        };
+        ActionLog log = new ActionLog();
+        log.ActiveObj = activeObj;
+        log.ActionType = Game.ActionType.None;
+        log.ObjIndex = unit.ObjIndex;
+        log.ObjCurHp = unit.CurHP;
+        log.ObjHP = unit.FinalHp;
+
+        // 상태(버프,디버프) 리스트 추가
+        foreach (var condition in unit.ConditionDic) {
+            log.CondtionList.Add(condition.Key);
+        }
         actionLogs.Add(log);
     }
 
-    private void DisplayTurnLogs() {
+    private IEnumerator DisplayTurnLogs() {
         for (int a = 0; a < _turnLogs.Count; a++) {
             Debug.Log("============= 턴 : " + (a + 1) + " ==============");
             for (int i = 0; i < _turnLogs[a].Count; i++) {
                 if (_turnLogs[a][i].Winner != ActiveObj.None) {
                     Debug.Log("승리자 : " + _turnLogs[a][i].Winner);
                     break;
+                }
+
+                // 턴 시작일경우 기본 세팅
+                if (_turnLogs[a][i].ActionType == Game.ActionType.None) {
+                    Global_UIEventSystem.CallUIEvent<ActionLog>(eUIEventType.NormalTurnStartData, _turnLogs[a][i]);
+                    continue;
                 }
 
                 if (_turnLogs[a][i].ActiveObj == ActiveObj.Enemy) {
@@ -217,6 +233,7 @@ public class NormalStage : MonoBehaviour {
                 Debug.Log("------------------------------------");
             }
             Debug.Log("=================================");
+            yield return new WaitForSeconds(1.0f);
         }
 
         if (_winner == ActiveObj.Player) { // 승리자가 플레이어일 경우 보상 후 다음 웨이브 진행
@@ -239,6 +256,8 @@ public class NormalStage : MonoBehaviour {
             }
             _coNextWave = StartCoroutine(NextWave());
         } 
+
+        yield return null;
     }
 
     private IEnumerator NextWave() {

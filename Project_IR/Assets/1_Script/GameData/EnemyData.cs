@@ -36,6 +36,5 @@ public class EnemyData : UnitData {
         HitDic.Clear();
         ConditionDic.Clear();
 
-        //test
     }
 }
